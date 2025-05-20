@@ -2,7 +2,7 @@
 
 > Асинхронный музыкальный бот для Discord с поддержкой очереди, паузы, пропуска и воспроизведения через YouTube.
 
-![Python 3.12.9](https://img.shields.io/badge/python-%233670A0?logo=python&logoColor=white )
+![Python 3.12.9](https://img.shields.io/badge/python-3.12.9-%233670A0?logo=python&logoColor=white )
 ![Discord.py](https://img.shields.io/badge/discord.py-%235865F2?logo=discord&logoColor=white )
 ![yt-dlp](https://img.shields.io/badge/yt--dlp-green )
 
