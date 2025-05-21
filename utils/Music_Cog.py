@@ -9,6 +9,9 @@ from utils.Quare_manager import SONG_QUEUES
 class Music(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
+        tree = self.bot.tree
+        self._old_tree_error = tree.on_error
+        tree.on_error = self.tree_on_error
 
     @app_commands.command(name="play", description="Play a song or add it to the queue.")
     @app_commands.describe(song_query="Search query")
@@ -59,9 +62,10 @@ class Music(commands.Cog):
 
         source = discord.FFmpegOpusAudio(audio_url, **ffmpeg_options)
 
-        def after_play(error):
+        async def after_play(error):
             if error:
-                print(f"Error playing {title}: {error}")
+                coro = channel.send(f"Ошибка воспроизведения {title}: {error}")
+                await coro
             asyncio.run_coroutine_threadsafe(self.start_next_song(voice_client, guild_id, channel), self.bot.loop)
 
         voice_client.play(source, after=after_play)
@@ -74,6 +78,7 @@ class Music(commands.Cog):
             await interaction.response.send_message("Skipped the current song.")
         else:
             await interaction.response.send_message("Not playing anything to skip.")
+        return
 
     @app_commands.command(name="pause", description="Pause the currently playing song.")
     async def pause(self, interaction: discord.Interaction):
@@ -84,6 +89,7 @@ class Music(commands.Cog):
             return await interaction.response.send_message("Nothing is currently playing.")
         voice_client.pause()
         await interaction.response.send_message("Playback paused!")
+        return
 
     @app_commands.command(name="resume", description="Resume the currently paused song.")
     async def resume(self, interaction: discord.Interaction):
@@ -94,13 +100,14 @@ class Music(commands.Cog):
             return await interaction.response.send_message("I’m not paused right now.")
         voice_client.resume()
         await interaction.response.send_message("Playback resumed!")
+        return
 
     @app_commands.command(name="stop", description="Stop playback and clear the queue.")
     async def stop(self, interaction: discord.Interaction):
         await interaction.response.defer()
         voice_client = interaction.guild.voice_client
         if not voice_client or not voice_client.is_connected():
-            return await interaction.followup.send_message("I'm not connected to any voice channel.")
+            return await interaction.followup.send("I'm not connected to any voice channel.")
         guild_id_str = str(interaction.guild.id)
         if guild_id_str in SONG_QUEUES:
             SONG_QUEUES[guild_id_str].clear()
@@ -108,8 +115,9 @@ class Music(commands.Cog):
             voice_client.stop()
         await voice_client.disconnect()
         await interaction.followup.send("Stopped playback and disconnected!")
+        return
 
-    async def tree_on_error(
+    async def cog_app_command_error(
             self,
             interaction: discord.Interaction,
             error: app_commands.AppCommandError
