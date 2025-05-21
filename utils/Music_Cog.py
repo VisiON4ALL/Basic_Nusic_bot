@@ -117,7 +117,7 @@ class Music(commands.Cog):
         await interaction.followup.send("Stopped playback and disconnected!")
         return
 
-    async def cog_app_command_error(
+    async def tree_on_error(
             self,
             interaction: discord.Interaction,
             error: app_commands.AppCommandError
