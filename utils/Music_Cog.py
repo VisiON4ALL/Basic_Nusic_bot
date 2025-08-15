@@ -5,6 +5,8 @@ from utils.music import get_audio_source, play_next_song as utils_play_next
 from collections import deque
 import asyncio
 from utils.Quare_manager import SONG_QUEUES
+import os
+import platform
 
 class Music(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -54,12 +56,19 @@ class Music(commands.Cog):
         asyncio.create_task(self._play_audio(voice_client, guild_id, channel, audio_url, title))
 
     async def _play_audio(self, voice_client, guild_id, channel, audio_url, title):
+
+        if platform.system() == "Windows":
+            ffmpeg_path = "bin\\ffmpeg\\ffmpeg.exe"
+        else:
+
+            ffmpeg_path = "bin/ffmpeg/ffmpeg"
+        
         ffmpeg_options = {
             "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
             "options": "-vn -c:a libopus -b:a 64k",
-            "executable": "bin\\ffmpeg\\ffmpeg.exe"
+            # "executable": ffmpeg_path
         }
-
+        
         source = discord.FFmpegOpusAudio(audio_url, **ffmpeg_options)
 
         async def after_play(error):

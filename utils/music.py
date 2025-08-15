@@ -17,10 +17,8 @@ def _extract(query, ydl_opts):
 
 async def get_audio_source(song_query):
     ydl_options = {
-        "format": "bestaudio[abr<=64]/bestaudio",
+        "format": "bestaudio/best",
         "noplaylist": True,
-        "youtube_include_dash_manifest": False,
-        "youtube_include_hls_manifest": False,
         "default_search": "auto"
     }
     query = song_query
