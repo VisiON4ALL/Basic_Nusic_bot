@@ -16,18 +16,22 @@ def _extract(query, ydl_opts):
         return ydl.extract_info(query, download=False)
 
 async def get_audio_source(song_query):
-    ydl_options = {
-        "format": "bestaudio/best",
-        "noplaylist": True,
-        "default_search": "auto"
-    }
-    query = song_query
-    results = await search_ytdlp_async(query, ydl_options)
-    tracks = results.get("entries", [])
-    if not tracks:
+    try:
+        ydl_options = {
+            "format": "bestaudio/best",
+            "noplaylist": True,
+            "default_search": "auto"
+        }
+        query = song_query
+        results = await search_ytdlp_async(query, ydl_options)
+        tracks = results.get("entries", [])
+        if not tracks:
+            return None, None
+        first_track = tracks[0]
+        return first_track["url"], first_track.get("title", "Untitled")
+    except Exception as e:
+        print(f"Error getting audio: {e}")
         return None, None
-    first_track = tracks[0]
-    return first_track["url"], first_track.get("title", "Untitled")
 
 
 async def play_next_song(voice_client, guild_id, channel, bot):

@@ -15,13 +15,13 @@ class Music(commands.Cog):
         self._old_tree_error = tree.on_error
         tree.on_error = self.tree_on_error
 
-    @app_commands.command(name="play", description="Play a song or add it to the queue.")
-    @app_commands.describe(song_query="Search query")
+    @app_commands.command(name="play", description="Начать воспроизведение музыки или добавить в очередь")
+    @app_commands.describe(song_query="Очередь воспроизведния")
     async def play(self, interaction: discord.Interaction, song_query: str):
         await interaction.response.defer()
         user_voice = interaction.user.voice
         if not user_voice:
-            await interaction.followup.send("You must be in a voice channel.")
+            await interaction.followup.send("Должны быть в голосовом канале")
             return
 
         voice_channel = user_voice.channel
@@ -34,7 +34,7 @@ class Music(commands.Cog):
 
         audio_url, title = await get_audio_source(song_query)
         if not audio_url:
-            await interaction.followup.send("No results found.")
+            await interaction.followup.send("Ничего не найдено")
             return
 
         guild_id = str(interaction.guild.id)
