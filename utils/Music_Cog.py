@@ -163,7 +163,7 @@ class Music(commands.Cog):
 		if voice_client.is_playing() or voice_client.is_paused():
 			voice_client.stop()
 		await voice_client.disconnect()
-		await interaction.followup.send("Остановлено и отключился!")
+		await interaction.followup.send("Воспроизведение остановлено и бот отключен")
 		return
 
 	async def tree_on_error(
