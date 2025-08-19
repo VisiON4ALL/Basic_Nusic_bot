@@ -20,7 +20,10 @@ async def get_audio_source(song_query):
         ydl_options = {
             "format": "bestaudio/best",
             "noplaylist": True,
-            "default_search": "auto"
+            "default_search": "auto",
+            "socket_timeout": 5,
+            "retries": 3,
+            "quiet": True,
         }
         query = song_query
         results = await search_ytdlp_async(query, ydl_options)
@@ -38,7 +41,7 @@ async def play_next_song(voice_client, guild_id, channel, bot):
     from utils.Quare_manager import SONG_QUEUES
     if SONG_QUEUES[guild_id]:
         audio_url, title = SONG_QUEUES[guild_id].popleft()
-        await channel.send(f"Now playing: **{title}**")
+        await channel.send(f"Сейчас играет **{title}**")
         if len(SONG_QUEUES[guild_id]) >= 1:
             next_query = SONG_QUEUES[guild_id][0][1]
             asyncio.create_task(get_audio_source(next_query))
