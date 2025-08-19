@@ -34,22 +34,26 @@ class Music(commands.Cog):
 					except asyncio.TimeoutError:
 						await asyncio.sleep(1)
 
+
 			vc = await try_connect()
 			if vc:
 				return vc
+
+
 			candidates = ["helsinki", "stockholm", "warsaw", "frankfurt", "rotterdam", "vienna", "prague"]
 			for r in candidates:
                 for _ in range(3):
                     try:
-                        print(f"[voice] try region: {r}")
-                        await vch.edit(rtc_region=r)
-                        vc = await try_connect(timeout=20, attempts=1)
-                        if vc:
-                            return vc
-                    except asyncio.TimeoutError:
-                        continue
-                    except discord.Forbidden:
-                        break
+					    print(f"[voice] try region: {r}")
+					    await vch.edit(rtc_region=r)
+					    vc = await try_connect()
+					    if vc:
+						    return vc
+				    except asyncio.TimeoutError:
+					    continue
+				    except discord.Forbidden:
+					    break
+
 
 			try:
 				await vch.edit(rtc_region=None)
